@@ -8,7 +8,11 @@ import moment from "moment";
 
 function convertUtcToLocalTime(utcTimeStr) {
     let utcMoment = moment.utc(utcTimeStr)
-    return utcMoment.local().format('ddd DD-MMM-YYYY, hh:mm A')
+    return utcMoment.local()
+}
+
+function convertUtcToLocalTimeFormatted(utcTimeStr) {
+    return convertUtcToLocalTime(utcTimeStr).format('ddd DD-MMM-YYYY, hh:mm A')
 }
 
 export function Meeting() {
@@ -32,7 +36,7 @@ export function Meeting() {
                      Start datetime:
                  </div>
                  <div className={styles.field_value}>
-                     {convertUtcToLocalTime(meeting.start_time)}
+                     {convertUtcToLocalTimeFormatted(meeting.start_time)}
                  </div>
              </div>
 
@@ -41,7 +45,7 @@ export function Meeting() {
                      End datetime:
                  </div>
                  <div className={styles.field_value}>
-                     {convertUtcToLocalTime(meeting.end_time)}
+                     {convertUtcToLocalTimeFormatted(meeting.end_time)}
                  </div>
              </div>
 
