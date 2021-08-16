@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   decrement,
@@ -6,16 +6,35 @@ import {
   incrementByAmount,
   incrementAsync,
   incrementIfOdd,
-  selectCount,
+  selectCount, findMeetingsAsync,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
+import {fetchMeetings} from "./meetingAPI";
+import {fetchCount} from "../counter/counterAPI";
 
 export function Meeting() {
+
+  // let data = fetchMeetings();
+
+
+
   const count = useSelector(selectCount);
   const dispatch = useDispatch();
+
   const [incrementAmount, setIncrementAmount] = useState('2');
 
   const incrementValue = Number(incrementAmount) || 0;
+
+  useEffect(() => {
+    // Update the document title using the browser API
+    //document.title = `You clicked ${count} times`;
+    // console.log('I am here at 31');
+    dispatch(findMeetingsAsync());
+    // console.log('I am here at 33');
+  });
+
+  // dispatch(findMeetingsAsync());
+
 
   return (
     <div>
@@ -32,49 +51,7 @@ export function Meeting() {
         <div>2</div>
         <div>2</div>
       </div>
-      {/*<div className={styles.row}>*/}
-      {/*  <button*/}
-      {/*    className={styles.button}*/}
-      {/*    aria-label="Decrement value"*/}
-      {/*    onClick={() => dispatch(decrement())}*/}
-      {/*  >*/}
-      {/*    -*/}
-      {/*  </button>*/}
-      {/*  <span className={styles.value}>{count}</span>*/}
-      {/*  <button*/}
-      {/*    className={styles.button}*/}
-      {/*    aria-label="Increment value"*/}
-      {/*    onClick={() => dispatch(increment())}*/}
-      {/*  >*/}
-      {/*    +*/}
-      {/*  </button>*/}
-      {/*</div>*/}
-      {/*<div className={styles.row}>*/}
-      {/*  <input*/}
-      {/*    className={styles.textbox}*/}
-      {/*    aria-label="Set increment amount"*/}
-      {/*    value={incrementAmount}*/}
-      {/*    onChange={(e) => setIncrementAmount(e.target.value)}*/}
-      {/*  />*/}
-      {/*  <button*/}
-      {/*    className={styles.button}*/}
-      {/*    onClick={() => dispatch(incrementByAmount(incrementValue))}*/}
-      {/*  >*/}
-      {/*    Add Amount--*/}
-      {/*  </button>*/}
-      {/*  <button*/}
-      {/*    className={styles.asyncButton}*/}
-      {/*    onClick={() => dispatch(incrementAsync(incrementValue))}*/}
-      {/*  >*/}
-      {/*    Add Async*/}
-      {/*  </button>*/}
-      {/*  <button*/}
-      {/*    className={styles.button}*/}
-      {/*    onClick={() => dispatch(incrementIfOdd(incrementValue))}*/}
-      {/*  >*/}
-      {/*    Add If Odd*/}
-      {/*  </button>*/}
-      {/*</div>*/}
+
     </div>
   );
 }
