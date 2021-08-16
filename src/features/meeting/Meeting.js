@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   findMeetingsAsync, selectCurrentMeetings,
@@ -19,17 +19,24 @@ function calendarRanger(meetings) {
     const uniqueDates = []
     let dateStr = null
 
-    // if(meetings){
-    //     for(let meeting in meetings){
-    //         dateStr = convertUtcToLocalTime(meeting.start_time)
-    //         if(! uniqueDates.includes(meeting.dateStr)){
-    //             uniqueDates.push(dateStr)
-    //         }
-    //     }
-    // }
-    //
-    // console.log('I am here at 33', uniqueDates);
+    if(meetings){
+        for(let index in meetings){
+            let meeting = meetings[index]
+            dateStr = convertUtcToLocalTime(meeting.start_time).format('YYYY/MM/DD')
+            if(! uniqueDates.includes(dateStr)){
+                uniqueDates.push(dateStr)
+            }
+        }
+    }
 
+    let dateItems = null
+    if(uniqueDates.length > 0){
+        dateItems = uniqueDates.map((uniqueDate) =>
+            <option value={uniqueDate} key={uniqueDate}>
+                {uniqueDate}
+            </option>
+        )
+    }
 
     return (
         <div className={styles.calendar_ranger_wrapper}>
@@ -40,10 +47,7 @@ function calendarRanger(meetings) {
                         Starting Day:
                     </label>
                     <select id="start_day" name="start_day">
-                        <option value="volvo">Volvo</option>
-                        <option value="saab">Saab</option>
-                        <option value="fiat">Fiat</option>
-                        <option value="audi">Audi</option>
+                        {dateItems}
                     </select>
                 </div>
 
@@ -52,10 +56,7 @@ function calendarRanger(meetings) {
                         Ending Day:
                     </label>
                     <select id="end_day" name="end_day">
-                        <option value="volvo">Volvo</option>
-                        <option value="saab">Saab</option>
-                        <option value="fiat">Fiat</option>
-                        <option value="audi">Audi</option>
+                        {dateItems}
                     </select>
                 </div>
             </div>
@@ -76,6 +77,7 @@ export function Meeting() {
   });
 
   let meetingItems = null
+  let meetingsRange = null
   if(currentMeetings){
     meetingItems = currentMeetings.map((meeting) =>
       <div key={meeting.id}>
@@ -128,13 +130,16 @@ export function Meeting() {
          </div>
       </div>
     );
+
+    meetingsRange = calendarRanger(currentMeetings)
+
   }
 
   return (
 
     <div>
       <h1>Meeting List</h1>
-        {calendarRanger()}
+        {meetingsRange}
       <div className={styles.wrapper}>
         {meetingItems}
       </div>
