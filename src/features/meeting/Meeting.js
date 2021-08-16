@@ -4,20 +4,22 @@ import {
   findMeetingsAsync, selectCurrentMeetings,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
+import moment from "moment";
+
+function convertUtcToLocalTime(utcTimeStr) {
+    let utcMoment = moment.utc(utcTimeStr)
+    return utcMoment.local().format('ddd DD-MMM-YYYY, hh:mm A')
+}
+
 export function Meeting() {
   const currentMeetings = useSelector(selectCurrentMeetings);
   const dispatch = useDispatch();
 
   useEffect(() => {
-
     if( ! currentMeetings){
       dispatch(findMeetingsAsync());
     }
-
-  }, );
-
-  console.log('I am here at 26', currentMeetings)
-
+  });
 
   let meetingItems = null
   if(currentMeetings){
@@ -30,7 +32,7 @@ export function Meeting() {
                      Start datetime:
                  </div>
                  <div className={styles.field_value}>
-                     {meeting.start_time}
+                     {convertUtcToLocalTime(meeting.start_time)}
                  </div>
              </div>
 
@@ -39,7 +41,7 @@ export function Meeting() {
                      End datetime:
                  </div>
                  <div className={styles.field_value}>
-                     {meeting.end_time}
+                     {convertUtcToLocalTime(meeting.end_time)}
                  </div>
              </div>
 
