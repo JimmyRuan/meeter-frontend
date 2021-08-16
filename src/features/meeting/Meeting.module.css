@@ -82,8 +82,8 @@
   width: 100%;
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   max-width: 950px;
-
 }
 .wrapper > div {
   flex: 1 1 420px;
@@ -120,5 +120,29 @@
 
 .meeting_wrapper > div > .field_value {
   font-size: 1em;
+}
+
+.calendar_ranger_wrapper {
+  border: 1px solid lightgray;
+  padding: 10px;
+}
+
+.calendar_ranger_wrapper > .calendar_ranger {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 950px;
+}
+
+.calendar_ranger_wrapper > .calendar_ranger > div {
+  flex: 1 1 320px;
+  width: auto;
+}
+
+.calendar_ranger_wrapper > .calendar_ranger > div > label{
+  font-weight: bold;
+  font-size: 1em;
+  margin-right: 1em;
 }
 
