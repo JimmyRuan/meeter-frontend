@@ -1,55 +1,85 @@
-import React, {useEffect, useState} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React, {useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
-  decrement,
-  increment,
-  incrementByAmount,
-  incrementAsync,
-  incrementIfOdd,
-  selectCount, findMeetingsAsync,
+  findMeetingsAsync, selectCurrentMeetings,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
-import {fetchMeetings} from "./meetingAPI";
-import {fetchCount} from "../counter/counterAPI";
-
 export function Meeting() {
-
-  // let data = fetchMeetings();
-
-
-
-  const count = useSelector(selectCount);
+  const currentMeetings = useSelector(selectCurrentMeetings);
   const dispatch = useDispatch();
 
-  const [incrementAmount, setIncrementAmount] = useState('2');
-
-  const incrementValue = Number(incrementAmount) || 0;
-
   useEffect(() => {
-    // Update the document title using the browser API
-    //document.title = `You clicked ${count} times`;
-    // console.log('I am here at 31');
-    dispatch(findMeetingsAsync());
-    // console.log('I am here at 33');
-  });
 
-  // dispatch(findMeetingsAsync());
+    if( ! currentMeetings){
+      dispatch(findMeetingsAsync());
+    }
 
+  }, );
+
+  console.log('I am here at 26', currentMeetings)
+
+
+  let meetingItems = null
+  if(currentMeetings){
+    meetingItems = currentMeetings.map((meeting) =>
+      <div key={meeting.id}>
+        <h3>{meeting.title}</h3>
+         <div className={styles.meeting_wrapper}>
+             <div>
+                 <div className={styles.field_name}>
+                     Start datetime:
+                 </div>
+                 <div className={styles.field_value}>
+                     {meeting.start_time}
+                 </div>
+             </div>
+
+             <div>
+                 <div className={styles.field_name}>
+                     End datetime:
+                 </div>
+                 <div className={styles.field_value}>
+                     {meeting.end_time}
+                 </div>
+             </div>
+
+             <div>
+                 <div className={styles.field_name}>
+                     Number of attendees:
+                 </div>
+                 <div className={styles.field_value}>
+                     {meeting.attendees_number}
+                 </div>
+             </div>
+
+             <div>
+                 <div className={styles.field_name}>
+                     Agenda:
+                 </div>
+                 <div className={styles.field_value}>
+                     {meeting.agenda || 'N/A'}
+                 </div>
+             </div>
+
+             <div>
+                 <div className={styles.field_name}>
+                     Status:
+                 </div>
+                 <div className={styles.field_value}>
+                     {meeting.status}
+                 </div>
+             </div>
+         </div>
+      </div>
+    );
+  }
 
   return (
+
     <div>
       <h1>Meeting List</h1>
       <div className={styles.wrapper}>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
-        <div>2</div>
+        {meetingItems}
       </div>
 
     </div>

@@ -79,20 +79,46 @@
 
 /* starting here */
 .wrapper {
-  width: 500px;
+  width: 100%;
   display: flex;
   flex-wrap: wrap;
+  max-width: 950px;
 
 }
 .wrapper > div {
-  flex: 1 1 150px;
-  width: 300px;
-  height: 300px;
-  /*background-color: green;*/
-  border: 1px solid green;
+  flex: 1 1 420px;
+  width: auto;
+  height: auto;
+  border: 1px solid lightgray;
   color: black;
   flex-grow: 0;
   flex-shrink: 0;
   margin: 6px;
+  min-height: 300px;
+}
+
+.meeting_wrapper {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 950px;
+}
+
+.meeting_wrapper > div {
+  flex: 1 1 320px;
+  width: auto;
+  border-top: 1px solid lightgray;
+  color: black;
+  text-align: left;
+  padding: 5px 5px 5px 10px;
+}
+
+.meeting_wrapper > div > .field_name {
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.meeting_wrapper > div > .field_value {
+  font-size: 1em;
 }
 
