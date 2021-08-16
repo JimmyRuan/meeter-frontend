@@ -140,9 +140,19 @@
   width: auto;
 }
 
-.calendar_ranger_wrapper > .calendar_ranger > div > label{
+.calendar_ranger_wrapper > button {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.calendar_ranger_wrapper > .calendar_ranger > div > label {
   font-weight: bold;
   font-size: 1em;
   margin-right: 1em;
+}
+
+.calendar_ranger_wrapper > .calendar_ranger > div > select {
+  width: 120px;
+  text-align: center;
 }
 

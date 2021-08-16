@@ -40,7 +40,7 @@ function calendarRanger(meetings) {
 
     return (
         <div className={styles.calendar_ranger_wrapper}>
-            <h3>Calendar Selection Range</h3>
+            <button>Calendar Selection Range</button>
             <div className={styles.calendar_ranger}>
                 <div>
                     <label htmlFor="start_day">
@@ -69,6 +69,7 @@ function calendarRanger(meetings) {
 export function Meeting() {
   const currentMeetings = useSelector(selectCurrentMeetings);
   const dispatch = useDispatch();
+
 
   useEffect(() => {
     if( ! currentMeetings){
