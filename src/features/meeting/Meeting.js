@@ -15,9 +15,20 @@ function convertUtcToLocalTimeFormatted(utcTimeStr) {
     return convertUtcToLocalTime(utcTimeStr).format('ddd DD-MMM-YYYY, hh:mm A')
 }
 
-function calendarRanger(meetings) {
+// function submitCalendarRange(startDay, endDay){
+//     console.log('I am here at 19', [startDay, endDay])
+// }
+
+function calendarRanger(meetings,
+                        startDay,
+                        endDay,
+                        setStartDay,
+                        setEndDay,
+                        submitCalendarRange) {
     const uniqueDates = []
     let dateStr = null
+
+    // console.log('I am here at 26', [startDay, endDay])
 
     if(meetings){
         for(let index in meetings){
@@ -40,13 +51,20 @@ function calendarRanger(meetings) {
 
     return (
         <div className={styles.calendar_ranger_wrapper}>
-            <button>Calendar Selection Range</button>
+            <button onClick={() => {
+                submitCalendarRange(startDay, endDay)
+            }}>Calendar Selection Range</button>
             <div className={styles.calendar_ranger}>
                 <div>
                     <label htmlFor="start_day">
                         Starting Day:
                     </label>
-                    <select id="start_day" name="start_day">
+                    <select id="start_day" name="start_day"
+                            defaultValue=''
+                            onChange={ e => { setStartDay(e.target.value) }}>
+                        <option value='' key='select-start-day'>
+                            Select Start Day
+                        </option>
                         {dateItems}
                     </select>
                 </div>
@@ -55,7 +73,12 @@ function calendarRanger(meetings) {
                     <label htmlFor="end_day">
                         Ending Day:
                     </label>
-                    <select id="end_day" name="end_day">
+                    <select id="end_day" name="end_day"
+                            defaultValue=''
+                            onChange={ e => { setEndDay(e.target.value) }}>
+                        <option value='' key='select-end-day'>
+                            Select End Day
+                        </option>
                         {dateItems}
                     </select>
                 </div>
@@ -70,12 +93,33 @@ export function Meeting() {
   const currentMeetings = useSelector(selectCurrentMeetings);
   const dispatch = useDispatch();
 
+    const [startDay, setStartDay] = useState();
+    const [endDay, setEndDay] = useState();
+
+    const submitCalendarRange = () => {
+        if( startDay === '' || endDay === ''){
+            alert('Please specify "Start Day" and "End Day" for calendar day range')
+            return false;
+        }
+
+        const startDayMoment = moment(startDay, 'YYYY/MM/DD')
+        const endDayMoment = moment(endDay, 'YYYY/MM/DD')
+
+        if(startDayMoment.isAfter(endDayMoment)){
+            alert('"Start Day" must be before "End Day" for the the range')
+            return false;
+        }
+
+
+    }
+
 
   useEffect(() => {
     if( ! currentMeetings){
       dispatch(findMeetingsAsync());
     }
   });
+
 
   let meetingItems = null
   let meetingsRange = null
@@ -132,7 +176,14 @@ export function Meeting() {
       </div>
     );
 
-    meetingsRange = calendarRanger(currentMeetings)
+    meetingsRange = calendarRanger(
+        currentMeetings,
+        startDay,
+        endDay,
+        setStartDay,
+        setEndDay,
+        submitCalendarRange
+    )
 
   }
 
