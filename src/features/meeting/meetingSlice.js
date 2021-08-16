@@ -1,9 +1,11 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import {createAsyncThunk, createSlice, current} from '@reduxjs/toolkit';
 import {fetchMeetings} from './meetingAPI';
+import moment from "moment";
 
 const initialState = {
   value: 0,
   meetings: null,
+  current_meetings: null,
   status: 'idle',
 };
 
@@ -25,6 +27,26 @@ export const meetingSlice = createSlice({
   initialState,
   // The `reducers` field lets us define reducers and generate associated actions
   reducers: {
+    filterMeetings: (state, action) => {
+
+        if(! action.payload.start_day || ! action.payload.end_day){
+            return false;
+        }
+
+        const startDayMoment = moment(action.payload.start_day, 'YYYY/MM/DD')
+        const endDayMoment = moment(action.payload.end_day, 'YYYY/MM/DD')
+
+        const startDay = startDayMoment.startOf('day').subtract(1, 'seconds')
+        const endDay = endDayMoment.endOf('day').add(1, 'seconds')
+
+        const currentState = current(state)
+
+       state.current_meetings = currentState.meetings.filter((meeting) => {
+           const selectedMeetingStartTime = moment(meeting.start_time)
+           return selectedMeetingStartTime.isAfter(startDay) && selectedMeetingStartTime.isBefore(endDay)
+       })
+
+    }
     // increment: (state) => {
     //   // Redux Toolkit allows us to write "mutating" logic in reducers. It
     //   // doesn't actually mutate the state because it uses the Immer library,
@@ -53,16 +75,18 @@ export const meetingSlice = createSlice({
         state.status = 'idle';
         // console.log('I am here at 55', action.payload)
         state.meetings = action.payload;
+        state.current_meetings = action.payload;
       });
   },
 });
 
-export const { increment, decrement, incrementByAmount } = meetingSlice.actions;
+export const { filterMeetings } = meetingSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
-export const selectCurrentMeetings = (state) => state.meeting.meetings;
+export const selectAllMeetings = (state) => state.meeting.meetings;
+export const selectCurrentMeetings = (state) => state.meeting.current_meetings;
 
 
 

@@ -1,7 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {
-  findMeetingsAsync, selectCurrentMeetings,
+    selectAllMeetings,
+    filterMeetings,
+    findMeetingsAsync, selectCurrentMeetings,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
 import moment from "moment";
@@ -15,10 +17,6 @@ function convertUtcToLocalTimeFormatted(utcTimeStr) {
     return convertUtcToLocalTime(utcTimeStr).format('ddd DD-MMM-YYYY, hh:mm A')
 }
 
-// function submitCalendarRange(startDay, endDay){
-//     console.log('I am here at 19', [startDay, endDay])
-// }
-
 function calendarRanger(meetings,
                         startDay,
                         endDay,
@@ -27,8 +25,6 @@ function calendarRanger(meetings,
                         submitCalendarRange) {
     const uniqueDates = []
     let dateStr = null
-
-    // console.log('I am here at 26', [startDay, endDay])
 
     if(meetings){
         for(let index in meetings){
@@ -90,6 +86,7 @@ function calendarRanger(meetings,
 }
 
 export function Meeting() {
+  const allMeetings = useSelector(selectAllMeetings);
   const currentMeetings = useSelector(selectCurrentMeetings);
   const dispatch = useDispatch();
 
@@ -110,7 +107,7 @@ export function Meeting() {
             return false;
         }
 
-
+        dispatch(filterMeetings({start_day: startDay, end_day: endDay}))
     }
 
 
@@ -177,7 +174,7 @@ export function Meeting() {
     );
 
     meetingsRange = calendarRanger(
-        currentMeetings,
+        allMeetings,
         startDay,
         endDay,
         setStartDay,
