@@ -1,5 +1,5 @@
 import {createAsyncThunk, createSlice, current} from '@reduxjs/toolkit';
-import {fetchMeetings} from './meetingAPI';
+import {cancelMeeting, fetchMeetings} from './meetingAPI';
 import moment from "moment";
 
 const initialState = {
@@ -22,6 +22,16 @@ export const findMeetingsAsync = createAsyncThunk(
     const response = await fetchMeetings();
     return response.data;
   }
+);
+
+export const cancelMeetingsAsync = createAsyncThunk(
+    'meeting/cancelMeeting',
+    async (params) => {
+        const {meetingId, cancelReason} = params
+        const response = await cancelMeeting(meetingId, cancelReason);
+
+        return response.data;
+    }
 );
 
 export const meetingSlice = createSlice({
@@ -72,7 +82,32 @@ export const meetingSlice = createSlice({
         state.status = 'idle';
         state.meetings = action.payload;
         state.current_meetings = action.payload;
-      });
+      })
+      .addCase(cancelMeetingsAsync.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(cancelMeetingsAsync.fulfilled, (state, action) => {
+        state.status = 'idle';
+          const currentState = current(state)
+          state.meetings = currentState.meetings.map((meeting) => {
+              if(meeting.id === action.payload.id){
+                  return action.payload
+              }
+              return meeting
+          })
+
+          state.current_meetings = currentState.current_meetings.map((meeting) => {
+              if(meeting.id === action.payload.id){
+                  return action.payload
+              }
+              return meeting
+          })
+
+
+          state.try_to_cancel = false
+          state.selected_meeting = null
+
+      })
   },
 });
 

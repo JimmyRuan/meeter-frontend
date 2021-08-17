@@ -11,3 +11,16 @@ export function fetchCount(amount = 1) {
 export function fetchMeetings() {
   return axios.get('http://127.0.0.1:3030/meetings');
 }
+
+export function cancelMeeting(meetingId, cancelReason) {
+
+  // console.log('I am here at 17', [
+  //     meetingId,
+  //     cancelReason
+  // ])
+  return axios.patch('http://127.0.0.1:3030/meetings/' + meetingId, {
+    "meeting": {
+      "cancel_reason": cancelReason
+    }
+  })
+}

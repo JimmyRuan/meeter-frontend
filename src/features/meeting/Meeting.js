@@ -3,7 +3,13 @@ import {useSelector, useDispatch} from 'react-redux';
 import {
     selectAllMeetings,
     filterMeetings,
-    findMeetingsAsync, selectCurrentMeetings, selectMeeting, getSelectedMeeting, getIsCancelling, showCancelForm,
+    findMeetingsAsync,
+    selectCurrentMeetings,
+    selectMeeting,
+    getSelectedMeeting,
+    getIsCancelling,
+    showCancelForm,
+    cancelMeetingsAsync,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
 import moment from "moment";
@@ -101,6 +107,7 @@ export function Meeting() {
 
     const [startDay, setStartDay] = useState();
     const [endDay, setEndDay] = useState();
+    const [cancelReason, setCancelReason] = useState();
 
     const submitCalendarRange = () => {
         if( startDay === '' || endDay === ''){
@@ -133,19 +140,38 @@ export function Meeting() {
         if(! selectedMeeting){
             return null
         }
+
+        const backDiv = <div className={styles.meeting_back}
+                             onClick={() => {
+                                 dispatch(selectMeeting(null))
+                             }}>
+            Back
+        </div>;
+
+        let cancelMeetingDiv = null
+        if(! selectedMeeting.cancel_reason){
+            cancelMeetingDiv =<div className={styles.meeting_cancel} onClick={() => {
+                                     if(! isCancel) {
+                                         dispatch(showCancelForm(true))
+                                     } else {
+                                         if(! cancelReason){
+                                             alert('Please specify the cancellation reason')
+                                             return false
+                                         }
+                                         dispatch(cancelMeetingsAsync({
+                                             meetingId: selectedMeeting.id,
+                                             cancelReason: cancelReason
+                                         }))
+                                     }
+
+                                 }}>
+                                Cancel Meeting
+                              </div>
+        }
+
         return (<div>
-            <div className={styles.meeting_back}
-                 onClick={() => {
-                     dispatch(selectMeeting(null))
-                 }}>
-                Back
-            </div>
-            <div className={styles.meeting_cancel}
-                 onClick={() => {
-                     dispatch(showCancelForm(true))
-                 }}>
-                Cancel Meeting
-            </div>
+            {backDiv}
+            {cancelMeetingDiv}
         </div>);
     }
 
@@ -172,8 +198,28 @@ export function Meeting() {
                   Please specify meeting cancel reason
               </div>
               <textarea className={styles.meeting_cancel_textarea}
+                  onChange={ (e) => {
+                      setCancelReason(e.target.value)
+                  }}
                   name='cancel_reason' />
           </div>)
+    }
+
+    const showCancelMessage = (meeting) => {
+         if(meeting.cancel_reason){
+             return (
+                 <div>
+                     <div className={styles.field_name}>
+                         Cancellation Reason:
+                     </div>
+                     <div className={styles.field_value}>
+                         {meeting.cancel_reason}
+                     </div>
+                 </div>
+             )
+         }
+
+         return null;
     }
 
     if(currentMeetings){
@@ -226,10 +272,13 @@ export function Meeting() {
                       {meeting.status}
                   </div>
               </div>
+
+              {showCancelMessage(meeting)}
+
           </div>
           {showCancelReason()}
           {showMeeting(meeting)}
-          {editMeeting()}
+          {editMeeting(cancelReason)}
       </div>
     );
 
