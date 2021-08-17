@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {
     selectAllMeetings,
     filterMeetings,
-    findMeetingsAsync, selectCurrentMeetings,
+    findMeetingsAsync, selectCurrentMeetings, selectMeeting, getSelectedMeeting,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
 import moment from "moment";
@@ -47,7 +47,8 @@ function calendarRanger(meetings,
 
     return (
         <div className={styles.calendar_ranger_wrapper}>
-            <button onClick={() => {
+            <button className={styles.button}
+                onClick={() => {
                 submitCalendarRange(startDay, endDay)
             }}>Calendar Selection Range</button>
             <div className={styles.calendar_ranger}>
@@ -87,7 +88,14 @@ function calendarRanger(meetings,
 
 export function Meeting() {
   const allMeetings = useSelector(selectAllMeetings);
-  const currentMeetings = useSelector(selectCurrentMeetings);
+  const selectedMeeting = useSelector(getSelectedMeeting)
+  let currentMeetings = useSelector(selectCurrentMeetings);
+  if(selectedMeeting && currentMeetings){
+      currentMeetings = currentMeetings.filter((meeting) => {
+          return meeting.id === selectedMeeting.id
+      })
+  }
+
   const dispatch = useDispatch();
 
     const [startDay, setStartDay] = useState();
@@ -120,56 +128,92 @@ export function Meeting() {
 
   let meetingItems = null
   let meetingsRange = null
-  if(currentMeetings){
+    const editMeeting = () => {
+        if(! selectedMeeting){
+            return null
+        }
+        return (<div>
+            <div className={styles.meeting_back}
+                 onClick={() => {
+                     dispatch(selectMeeting(null))
+                 }}>
+                Back
+            </div>
+            <div className={styles.meeting_cancel}
+                 onClick={() => {
+                     dispatch(selectMeeting(null))
+                 }}>
+                Cancel Meeting
+            </div>
+        </div>);
+    }
+
+    const showMeeting = (myMeeting) => {
+        if(selectedMeeting){
+            return null
+        }
+        return (
+            <div className={styles.meeting_back}
+                 onClick={() => {
+                     dispatch(selectMeeting(myMeeting))
+                 }}>
+                Show
+            </div>);
+    }
+
+    if(currentMeetings){
     meetingItems = currentMeetings.map((meeting) =>
-      <div key={meeting.id}>
-        <h3>{meeting.title}</h3>
-         <div className={styles.meeting_wrapper}>
-             <div>
-                 <div className={styles.field_name}>
-                     Start datetime:
-                 </div>
-                 <div className={styles.field_value}>
-                     {convertUtcToLocalTimeFormatted(meeting.start_time)}
-                 </div>
-             </div>
+      <div key={meeting.id}
+           className={styles.meeting_main}>
+          <h3>{meeting.title}</h3>
+          <div className={styles.meeting_wrapper}>
+              <div>
+                  <div className={styles.field_name}>
+                      Start datetime:
+                  </div>
+                  <div className={styles.field_value}>
+                      {convertUtcToLocalTimeFormatted(meeting.start_time)}
+                  </div>
+              </div>
 
-             <div>
-                 <div className={styles.field_name}>
-                     End datetime:
-                 </div>
-                 <div className={styles.field_value}>
-                     {convertUtcToLocalTimeFormatted(meeting.end_time)}
-                 </div>
-             </div>
+              <div>
+                  <div className={styles.field_name}>
+                      End datetime:
+                  </div>
+                  <div className={styles.field_value}>
+                      {convertUtcToLocalTimeFormatted(meeting.end_time)}
+                  </div>
+              </div>
 
-             <div>
-                 <div className={styles.field_name}>
-                     Number of attendees:
-                 </div>
-                 <div className={styles.field_value}>
-                     {meeting.attendees_number}
-                 </div>
-             </div>
+              <div>
+                  <div className={styles.field_name}>
+                      Number of attendees:
+                  </div>
+                  <div className={styles.field_value}>
+                      {meeting.attendees_number}
+                  </div>
+              </div>
 
-             <div>
-                 <div className={styles.field_name}>
-                     Agenda:
-                 </div>
-                 <div className={styles.field_value}>
-                     {meeting.agenda || 'N/A'}
-                 </div>
-             </div>
+              <div>
+                  <div className={styles.field_name}>
+                      Agenda:
+                  </div>
+                  <div className={styles.field_value}>
+                      {meeting.agenda || 'N/A'}
+                  </div>
+              </div>
 
-             <div>
-                 <div className={styles.field_name}>
-                     Status:
-                 </div>
-                 <div className={styles.field_value}>
-                     {meeting.status}
-                 </div>
-             </div>
-         </div>
+              <div>
+                  <div className={styles.field_name}>
+                      Status:
+                  </div>
+                  <div className={styles.field_value}>
+                      {meeting.status}
+                  </div>
+              </div>
+          </div>
+          {showMeeting(meeting)}
+          {editMeeting()}
       </div>
     );
 

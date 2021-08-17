@@ -21,19 +21,16 @@
 }
 
 .button {
-  appearance: none;
-  background: none;
-  font-size: 32px;
-  padding-left: 12px;
-  padding-right: 12px;
-  outline: none;
-  border: 2px solid transparent;
-  color: rgb(112, 76, 182);
-  padding-bottom: 4px;
+  background-color: darkgray;
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 10px;
   cursor: pointer;
-  background-color: rgba(112, 76, 182, 0.1);
-  border-radius: 2px;
-  transition: all 0.15s;
 }
 
 .textbox {
@@ -72,7 +69,6 @@
 }
 
 .asyncButton:active:after {
-  width: 0%;
   opacity: 1;
   transition: 0s;
 }
@@ -95,6 +91,10 @@
   flex-shrink: 0;
   margin: 6px;
   min-height: 300px;
+}
+
+.meeting_main {
+  border: 1px solid lightgray;
 }
 
 .meeting_wrapper {
@@ -154,5 +154,10 @@
 .calendar_ranger_wrapper > .calendar_ranger > div > select {
   width: 130px;
   text-align: center;
+}
+
+.meeting_back, .meeting_cancel {
+  text-decoration: underline;
+  cursor: pointer;
 }
 

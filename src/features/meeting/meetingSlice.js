@@ -6,6 +6,7 @@ const initialState = {
   value: 0,
   meetings: null,
   current_meetings: null,
+  selected_meeting: null,
   status: 'idle',
 };
 
@@ -45,7 +46,10 @@ export const meetingSlice = createSlice({
            const selectedMeetingStartTime = moment(meeting.start_time)
            return selectedMeetingStartTime.isAfter(startDay) && selectedMeetingStartTime.isBefore(endDay)
        })
+    },
 
+    selectMeeting: (state, action) => {
+        state.selected_meeting = action.payload
     }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -58,20 +62,20 @@ export const meetingSlice = createSlice({
       })
       .addCase(findMeetingsAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        // console.log('I am here at 55', action.payload)
         state.meetings = action.payload;
         state.current_meetings = action.payload;
       });
   },
 });
 
-export const { filterMeetings } = meetingSlice.actions;
+export const { filterMeetings, selectMeeting } = meetingSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
 // in the slice file. For example: `useSelector((state: RootState) => state.counter.value)`
 export const selectAllMeetings = (state) => state.meeting.meetings;
 export const selectCurrentMeetings = (state) => state.meeting.current_meetings;
+export const getSelectedMeeting = (state) => state.meeting.selected_meeting;
 
 
 
