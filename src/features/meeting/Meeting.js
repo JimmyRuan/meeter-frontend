@@ -9,7 +9,7 @@ import {
     getSelectedMeeting,
     getIsCancelling,
     showCancelForm,
-    cancelMeetingsAsync,
+    cancelMeetingsAsync, addMeetingsAsync,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
 import moment from "moment";
@@ -108,6 +108,15 @@ export function Meeting() {
     const [startDay, setStartDay] = useState();
     const [endDay, setEndDay] = useState();
     const [cancelReason, setCancelReason] = useState();
+    const [isMeetingFormShown, setIsMeetingFormShown] = useState(false);
+
+    //new form info
+    const [newTitle, setNewTitle] = useState();
+    const [newStartTime, setNewStartTime] = useState();
+    const [newEndTime, setNewEndTime] = useState();
+    const [newAttendeesNumber, setNewAttendeesNumber] = useState()
+    const [newAgenda, setNewAgenda] = useState();
+
 
     const submitCalendarRange = () => {
         if( startDay === '' || endDay === ''){
@@ -222,6 +231,76 @@ export function Meeting() {
          return null;
     }
 
+    // const [newTitle, setNewTitle] = useState();
+    // const [newStartTime, setNewStartTime] = useState();
+    // const [newEndTime, setNewEndTime] = useState();
+    // const [newAttendeesNumber, setNewAttendeesNumber] = useState()
+    // const [newAgenda, setNewAgenda] = useState();
+
+    const showMeetingForm = () => {
+        if(isMeetingFormShown){
+            return (<div>
+                <h2>New Meeting</h2>
+                <div className={styles.meeting_form}>
+                    <div>
+                        <label htmlFor="title">Title:</label>
+                        <input type="text" id="title" name="title" onChange={(e) => {
+                            setNewTitle(e.target.value)
+                        }} />
+                    </div>
+
+                    <div>
+                        <label htmlFor="start_time">Start Time:</label>
+                        <input type="text" id="start_time" name="start_time" onChange={(e) => {
+                            setNewStartTime(e.target.value)
+                        }} />
+                    </div>
+
+                    <div>
+                        <label htmlFor="end_time">End Time:</label>
+                        <input type="text" id="end_time" name="end_time"  onChange={(e) => {
+                            setNewEndTime(e.target.value)
+                        }} />
+                    </div>
+
+                    <div>
+                        <label htmlFor="attendees_number">Attendees Number:</label>
+                        <input type="text" id="attendees_number" name="attendees_number"  onChange={(e) => {
+                            setNewAttendeesNumber(e.target.value)
+                        }} />
+                    </div>
+
+                    <div>
+                        <label htmlFor="agenda">Agenda:</label>
+                        <textarea name="agenda"  onChange={(e) => {
+                            setNewAgenda(e.target.value)
+                        }} />
+                    </div>
+
+                    <div className={styles.submit} onClick={() => {
+                        const params = {
+                            calendar_id: 1,
+                            start_time: newStartTime,
+                            end_time: newEndTime,
+                            title: newTitle,
+                            agenda: newAgenda,
+                            attendees_number: newAttendeesNumber,
+                        }
+                        dispatch(addMeetingsAsync(params))
+                    }}>
+                        <div>Submit</div>
+                    </div>
+                </div>
+
+                <div className={styles.cancel_new_form}
+                    onClick={() => setIsMeetingFormShown(false)}>Cancel</div>
+            </div>)
+        }
+
+        return null
+
+    }
+
     if(currentMeetings){
     meetingItems = currentMeetings.map((meeting) =>
       <div key={meeting.id}
@@ -293,11 +372,24 @@ export function Meeting() {
 
   }
 
+  const meetingForm = showMeetingForm();
+  if(meetingForm){
+      return meetingForm
+  }
+
+
   return (
 
     <div>
       <h1>Meeting List</h1>
+        {showMeetingForm()}
         {meetingsRange}
+        <div>
+            <div onClick={() => {
+                setIsMeetingFormShown(true)
+            }}
+                className={styles.new_meeting_button}>Add New Meeting</div>
+        </div>
       <div className={styles.wrapper}>
         {meetingItems}
       </div>
