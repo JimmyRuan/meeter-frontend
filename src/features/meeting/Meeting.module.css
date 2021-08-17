@@ -161,3 +161,20 @@
   cursor: pointer;
 }
 
+.meeting_cancel_container {
+  border-top: 1px solid lightgray;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding: 5px;
+}
+
+.meeting_cancel_label {
+  font-weight: bold;
+  color: red;
+  padding: 5px;
+}
+
+.meeting_cancel_textarea {
+  width: 100%;
+}
+

@@ -7,6 +7,7 @@ const initialState = {
   meetings: null,
   current_meetings: null,
   selected_meeting: null,
+  try_to_cancel: false,
   status: 'idle',
 };
 
@@ -50,6 +51,13 @@ export const meetingSlice = createSlice({
 
     selectMeeting: (state, action) => {
         state.selected_meeting = action.payload
+        if(! action.payload){
+            state.try_to_cancel = false
+        }
+    },
+
+    showCancelForm: (state, action)  => {
+        state.try_to_cancel = action.payload
     }
   },
   // The `extraReducers` field lets the slice handle actions defined elsewhere,
@@ -68,7 +76,7 @@ export const meetingSlice = createSlice({
   },
 });
 
-export const { filterMeetings, selectMeeting } = meetingSlice.actions;
+export const { filterMeetings, selectMeeting, showCancelForm } = meetingSlice.actions;
 
 // The function below is called a selector and allows us to select a value from
 // the state. Selectors can also be defined inline where they're used instead of
@@ -76,6 +84,7 @@ export const { filterMeetings, selectMeeting } = meetingSlice.actions;
 export const selectAllMeetings = (state) => state.meeting.meetings;
 export const selectCurrentMeetings = (state) => state.meeting.current_meetings;
 export const getSelectedMeeting = (state) => state.meeting.selected_meeting;
+export const getIsCancelling = (state) => state.meeting.try_to_cancel;
 
 
 

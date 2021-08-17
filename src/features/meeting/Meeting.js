@@ -3,7 +3,7 @@ import {useSelector, useDispatch} from 'react-redux';
 import {
     selectAllMeetings,
     filterMeetings,
-    findMeetingsAsync, selectCurrentMeetings, selectMeeting, getSelectedMeeting,
+    findMeetingsAsync, selectCurrentMeetings, selectMeeting, getSelectedMeeting, getIsCancelling, showCancelForm,
 } from './meetingSlice';
 import styles from './Meeting.module.css';
 import moment from "moment";
@@ -89,6 +89,7 @@ function calendarRanger(meetings,
 export function Meeting() {
   const allMeetings = useSelector(selectAllMeetings);
   const selectedMeeting = useSelector(getSelectedMeeting)
+  const isCancel = useSelector(getIsCancelling);
   let currentMeetings = useSelector(selectCurrentMeetings);
   if(selectedMeeting && currentMeetings){
       currentMeetings = currentMeetings.filter((meeting) => {
@@ -141,7 +142,7 @@ export function Meeting() {
             </div>
             <div className={styles.meeting_cancel}
                  onClick={() => {
-                     dispatch(selectMeeting(null))
+                     dispatch(showCancelForm(true))
                  }}>
                 Cancel Meeting
             </div>
@@ -159,6 +160,20 @@ export function Meeting() {
                  }}>
                 Show
             </div>);
+    }
+
+    const showCancelReason = () => {
+        if(! isCancel || ! selectedMeeting){
+            return null
+        }
+      return (
+          <div className={styles.meeting_cancel_container}>
+              <div className={styles.meeting_cancel_label}>
+                  Please specify meeting cancel reason
+              </div>
+              <textarea className={styles.meeting_cancel_textarea}
+                  name='cancel_reason' />
+          </div>)
     }
 
     if(currentMeetings){
@@ -212,6 +227,7 @@ export function Meeting() {
                   </div>
               </div>
           </div>
+          {showCancelReason()}
           {showMeeting(meeting)}
           {editMeeting()}
       </div>
